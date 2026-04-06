@@ -1,0 +1,8 @@
+{
+  "appId": "com.quizmaster.pro",
+  "appName": "Quiz Master Pro",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

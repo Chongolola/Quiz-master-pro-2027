@@ -1,0 +1,110 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: profiles
+    // Document ID: userId
+    // Fields:
+    //   - username: string (required)
+    //   - email: string (required, email format)
+    //   - points: number (required)
+    //   - lives: number (required, max 5)
+    //   - lastLifeUpdate: timestamp (required)
+    //   - isAdmin: bool (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: questions
+    // Document ID: questionId
+    // Fields:
+    //   - category: string (required)
+    //   - difficulty: string (required, 'easy', 'medium', 'hard')
+    //   - type: string (required, 'multiple', 'boolean', 'text')
+    //   - questionText: string (required)
+    //   - correctAnswer: string (required)
+    //   - options: list (optional)
+    //   - explanation: string (optional)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: history
+    // Document ID: historyId (userId_questionId)
+    // Fields:
+    //   - userId: string (required)
+    //   - questionId: string (required)
+    //   - isCorrect: bool (required)
+    //   - answeredAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.isAdmin == true ||
+         (request.auth.token.email == "deluxdomingos@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidProfile(data) {
+      return data.keys().hasAll(['username', 'email', 'points', 'lives', 'lastLifeUpdate', 'isAdmin', 'createdAt']) &&
+             data.username is string && data.username.size() > 0 && data.username.size() < 50 &&
+             data.email is string && data.email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") &&
+             data.points is int && data.points >= 0 &&
+             data.lives is int && data.lives >= 0 && data.lives <= 5 &&
+             data.isAdmin is bool &&
+             data.lastLifeUpdate is timestamp &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidQuestion(data) {
+      return data.keys().hasAll(['category', 'difficulty', 'type', 'questionText', 'correctAnswer', 'createdAt']) &&
+             data.category is string && data.category.size() > 0 &&
+             data.difficulty in ['easy', 'medium', 'hard'] &&
+             data.type in ['multiple', 'boolean', 'text'] &&
+             data.questionText is string && data.questionText.size() > 0 &&
+             data.correctAnswer is string &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidHistory(data) {
+      return data.keys().hasAll(['userId', 'questionId', 'isCorrect', 'answeredAt']) &&
+             data.userId == request.auth.uid &&
+             data.questionId is string &&
+             data.isCorrect is bool &&
+             data.answeredAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /profiles/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId) && isValidProfile(request.resource.data) && request.resource.data.isAdmin == false;
+      allow update: if (isOwner(userId) && isValidProfile(request.resource.data) && request.resource.data.isAdmin == resource.data.isAdmin) || isAdmin();
+    }
+
+    match /questions/{questionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() && isValidQuestion(request.resource.data);
+    }
+
+    match /history/{historyId} {
+      allow read: if isOwner(request.auth.uid); // Simplified, usually historyId is userId_questionId
+      allow create: if isAuthenticated() && isValidHistory(request.resource.data);
+      allow update, delete: if false; // History should be immutable
+    }
+  }
+}

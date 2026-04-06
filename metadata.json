@@ -1,0 +1,5 @@
+{
+  "name": "Quiz Master Pro",
+  "description": "Um aplicativo de quiz completo com sistema de vidas, ranking global e painel administrativo.",
+  "requestFramePermissions": []
+}

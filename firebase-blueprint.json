@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Profile",
+      "description": "User profile data including points and lives.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "description": "Display name of the user." },
+        "email": { "type": "string", "format": "email", "description": "User email address." },
+        "points": { "type": "integer", "description": "Total points earned." },
+        "lives": { "type": "integer", "description": "Current number of lives (max 5)." },
+        "lastLifeUpdate": { "type": "string", "format": "date-time", "description": "Timestamp of the last life regeneration." },
+        "isAdmin": { "type": "boolean", "description": "Whether the user has administrative privileges." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp." }
+      },
+      "required": ["username", "email", "points", "lives", "lastLifeUpdate", "isAdmin", "createdAt"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "A quiz question.",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "description": "Question category (e.g., Science, History)." },
+        "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"], "description": "Difficulty level." },
+        "type": { "type": "string", "enum": ["multiple", "boolean", "text"], "description": "Question type." },
+        "questionText": { "type": "string", "description": "The actual question text." },
+        "correctAnswer": { "type": "string", "description": "The correct answer." },
+        "options": { "type": "array", "items": { "type": "string" }, "description": "List of options for multiple choice." },
+        "explanation": { "type": "string", "description": "Explanation of the correct answer." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the question was created." }
+      },
+      "required": ["category", "difficulty", "type", "questionText", "correctAnswer", "createdAt"]
+    },
+    "History": {
+      "title": "History",
+      "description": "A record of a user's answer to a question.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The UID of the user." },
+        "questionId": { "type": "string", "description": "The ID of the question." },
+        "isCorrect": { "type": "boolean", "description": "Whether the answer was correct." },
+        "answeredAt": { "type": "string", "format": "date-time", "description": "When the question was answered." }
+      },
+      "required": ["userId", "questionId", "isCorrect", "answeredAt"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": { "$ref": "Profile" },
+      "description": "User profiles."
+    },
+    "/questions/{questionId}": {
+      "schema": { "$ref": "Question" },
+      "description": "Quiz questions."
+    },
+    "/history/{historyId}": {
+      "schema": { "$ref": "History" },
+      "description": "User answer history."
+    }
+  }
+}
