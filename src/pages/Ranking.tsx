@@ -45,42 +45,42 @@ export default function Ranking() {
           <Trophy className="text-yellow-400" size={40} />
           Ranking Global
         </h1>
-        <p className="text-slate-400">Os melhores mestres do conhecimento.</p>
+        <p className="text-muted">Os melhores mestres do conhecimento.</p>
       </div>
 
-      <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
-        <div className="grid grid-cols-12 p-4 border-b border-slate-800 text-xs font-black uppercase text-slate-500 tracking-widest">
+      <div className="bg-card rounded-3xl border border-main overflow-hidden shadow-2xl">
+        <div className="grid grid-cols-12 p-4 border-b border-main text-xs font-black uppercase text-muted tracking-widest">
           <div className="col-span-2 text-center">Pos</div>
           <div className="col-span-7">Usuário</div>
-          <div className="col-span-3 text-right">Pontos</div>
+          <div className="col-span-3 text-right">Moedas</div>
         </div>
 
-        <div className="divide-y divide-slate-800">
+        <div className="divide-y divide-main">
           {rankings.map((profile, index) => (
             <motion.div 
               key={profile.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              className={`grid grid-cols-12 p-4 items-center hover:bg-slate-800/50 transition-colors ${index < 3 ? 'bg-indigo-500/5' : ''}`}
+              className={`grid grid-cols-12 p-4 items-center hover:bg-main transition-colors ${index < 3 ? 'bg-indigo-500/5' : ''}`}
             >
               <div className="col-span-2 flex justify-center">
                 {index === 0 ? <Medal className="text-yellow-400" size={24} /> :
                  index === 1 ? <Medal className="text-slate-400" size={24} /> :
                  index === 2 ? <Medal className="text-amber-600" size={24} /> :
-                 <span className="font-black text-slate-500">#{index + 1}</span>}
+                 <span className="font-black text-muted">#{index + 1}</span>}
               </div>
               <div className="col-span-7 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
-                  <User size={20} className="text-slate-400" />
+                <div className="w-10 h-10 rounded-full bg-main flex items-center justify-center border border-main">
+                  <User size={20} className="text-muted" />
                 </div>
                 <div>
-                  <p className="font-bold text-slate-100">{profile.username}</p>
-                  <p className="text-xs text-slate-500">{profile.isAdmin ? 'Administrador' : 'Jogador'}</p>
+                  <p className="font-bold text-main">{profile.username}</p>
+                  <p className="text-xs text-muted">{profile.isAdmin ? 'Administrador' : 'Jogador'}</p>
                 </div>
               </div>
               <div className="col-span-3 text-right">
-                <span className="text-lg font-black text-indigo-400">{profile.points.toLocaleString()}</span>
+                <span className="text-lg font-black text-indigo-400">{profile.points.toFixed(1)}</span>
               </div>
             </motion.div>
           ))}

@@ -10,6 +10,25 @@ export interface Profile {
   isAdmin: boolean;
   createdAt: number;
   isGuest?: boolean;
+  avatarUrl?: string;
+  bio?: string;
+  stats?: {
+    totalAnswers: number;
+    correctAnswers: number;
+    level: number;
+    exp: number;
+    dailyStreak: number;
+    lastDailyChallenge?: number;
+  };
+  lifelines?: {
+    fiftyFifty: number;
+    skip: number;
+    extraTime: number;
+  };
+  inventory?: {
+    avatars: string[];
+    themes: string[];
+  };
 }
 
 export type Difficulty = 'easy' | 'medium' | 'hard';

@@ -1,12 +1,36 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --bg-main: #020617; /* slate-950 */
+    --bg-card: #0f172a; /* slate-900 */
+    --text-main: #f1f5f9; /* slate-100 */
+    --text-muted: #94a3b8; /* slate-400 */
+    --border-main: #1e293b; /* slate-800 */
+  }
+
+  :root.light {
+    --bg-main: #f8fafc; /* slate-50 */
+    --bg-card: #ffffff; /* white */
+    --text-main: #0f172a; /* slate-900 */
+    --text-muted: #475569; /* slate-600 */
+    --border-main: #e2e8f0; /* slate-200 */
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
 @layer utilities {
+  .bg-main { background-color: var(--bg-main); }
+  .bg-card { background-color: var(--bg-card); }
+  .text-main { color: var(--text-main); }
+  .text-muted { color: var(--text-muted); }
+  .border-main { border-color: var(--border-main); }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
